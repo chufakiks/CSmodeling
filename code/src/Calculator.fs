@@ -11,7 +11,7 @@ let rec evaluate (expr: expr) : Result<int, string> =
         |DivExpr (Num(a), Num(b)) -> if b <> 0 then Ok (a/b) else failwith "Undefined - Divided with 0"
         |PlusExpr (Num(a), Num(b)) -> Ok (a + b)
         |MinusExpr (Num(a), Num(b)) -> Ok (a - b)
-        |PowExpr (Num(a) , Num(b)) -> Ok (a**b)
+        |PowExpr (Num(a) , Num(b)) -> Ok (int(float a ** float b)) 
         |UMinusExpr (Num(x)) -> Ok -x
         |_ -> failwith "Unsupported operator"
 
