@@ -15,11 +15,22 @@ let rec evaluate (expr: expr) : Result<int, string> =
             match evaluate a, evaluate b with
             | Ok(a), Ok(b) ->  if b <> 0 then Ok (a/b) else failwith "Undefined - Divided with 0"
             | Error e, _ | _, Error e -> Error e
-        |PlusExpr (Num(a: int), Num(b)) -> Ok (a + b)
-        |MinusExpr (Num(a), Num(b)) -> Ok (a - b)
-        |PowExpr (Num(a) , Num(b)) -> Ok(pown a b)
-        |UMinusExpr (Num(x)) -> Ok -x
-        |_ -> failwith "Unsupported operator"
+        |PlusExpr (a,b) ->  
+            match evaluate a, evaluate b with
+            | Ok(a), Ok(b) -> Ok(a+b)
+            | Error e, _ | _, Error e -> Error e
+        |MinusExpr (a,b) ->
+            match evaluate a, evaluate b with
+            | Ok(a), Ok(b) -> Ok(a-b)
+            | Error e, _ | _, Error e -> Error e                    
+        |PowExpr (a,b) ->
+            match evaluate a, evaluate b with
+            | Ok(a), Ok(b) -> if b >= 0 then Ok(pown a b) else failwith "Undefined - Negative power"
+            | Error e, _ | _, Error e -> Error e
+        |UMinusExpr a ->
+            match evaluate a with
+            | Ok a  -> Ok (-a) 
+            | Error e -> Error e
 
 
 let analysis (input: Input) : Output =
