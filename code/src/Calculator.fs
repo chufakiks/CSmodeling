@@ -7,13 +7,20 @@ open System
 let rec evaluate (expr: expr) : Result<int, string> =
     match expr with
         |Num(x) -> Ok x
-        |TimesExpr(Num(a), Num(b)) -> Ok(a*b)
-        |DivExpr (Num(a), Num(b)) -> if b <> 0 then Ok (a/b) else failwith "Undefined - Divided with 0"
-        |PlusExpr (Num(a), Num(b)) -> Ok (a + b)
+        |TimesExpr(a,b) -> 
+            match evaluate a, evaluate b with
+            | Ok(a), Ok(b) -> Ok(a*b)
+            | Error e, _ | _, Error e -> Error e
+        |DivExpr (a,b) -> 
+            match evaluate a, evaluate b with
+            | Ok(a), Ok(b) ->  if b <> 0 then Ok (a/b) else failwith "Undefined - Divided with 0"
+            | Error e, _ | _, Error e -> Error e
+        |PlusExpr (Num(a: int), Num(b)) -> Ok (a + b)
         |MinusExpr (Num(a), Num(b)) -> Ok (a - b)
-        |PowExpr (Num(a) , Num(b)) -> Ok (int(float a ** float b)) 
+        |PowExpr (Num(a) , Num(b)) -> Ok(pown a b)
         |UMinusExpr (Num(x)) -> Ok -x
         |_ -> failwith "Unsupported operator"
+
 
 let analysis (input: Input) : Output =
     match Parser.parse Grammar.start_expression input.expression with
